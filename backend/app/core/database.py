@@ -5,7 +5,9 @@ from sqlalchemy.orm import DeclarativeBase
 from app.core.config import settings
 
 
-engine = create_engine(settings.DATABASE_URL)
+engine = create_engine(
+    settings.DATABASE_URL
+)
 
 SessionLocal = sessionmaker(
     autocommit=False,
@@ -20,6 +22,7 @@ class Base(DeclarativeBase):
 
 def get_db():
     db = SessionLocal()
+
     try:
         yield db
     finally:
