@@ -4,18 +4,16 @@ type Props = {
   children: React.ReactNode;
 };
 
-function ProtectedRoute({
-  children,
-}: Props) {
+function ProtectedRoute({ children }: Props) {
+  const token = localStorage.getItem("token");
 
-  const token =
-    localStorage.getItem("token");
+  console.log("TOKEN:", token);
 
   if (!token) {
-    return <Navigate to="/" />;
+    return <Navigate to="/" replace />;
   }
 
-  return children;
+  return <>{children}</>;
 }
 
 export default ProtectedRoute;

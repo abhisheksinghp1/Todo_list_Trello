@@ -1,13 +1,23 @@
 import {
   BrowserRouter,
   Routes,
-  Route
+  Route,
 } from "react-router-dom";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
+import BoardPage from "./pages/BoardPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import CardPage from "./pages/CardPage";
+
+
+
+
+
+
+
+
 
 function App() {
   return (
@@ -33,6 +43,18 @@ function App() {
           }
         />
 
+        <Route
+          path="/boards/:id"
+          element={
+            <ProtectedRoute>
+              <BoardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/cards/:id"
+          element={<CardPage />}
+        />
       </Routes>
     </BrowserRouter>
   );

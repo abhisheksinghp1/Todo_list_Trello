@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   getBoards,
@@ -17,11 +16,12 @@ function BoardsPage() {
     useState("");
 
   const loadBoards = async () => {
-
-    const data =
-      await getBoards();
-
-    setBoards(data);
+    try {
+      const data = await getBoards();
+      setBoards(data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
@@ -31,7 +31,7 @@ function BoardsPage() {
   const handleCreate =
     async () => {
 
-      if (!title) return;
+      if (!title.trim()) return;
 
       await createBoard(title);
 
@@ -41,15 +41,13 @@ function BoardsPage() {
     };
 
   return (
-    <div>
+    <div style={{ padding: "20px" }}>
 
-      <h1>
-        My Boards
-      </h1>
+      <h1>My Boards</h1>
 
       <input
-        placeholder="Board Name"
         value={title}
+        placeholder="Board Name"
         onChange={(e) =>
           setTitle(e.target.value)
         }
@@ -58,7 +56,7 @@ function BoardsPage() {
       <button
         onClick={handleCreate}
       >
-        Create
+        Create Board
       </button>
 
       <div>
@@ -66,6 +64,7 @@ function BoardsPage() {
         {boards.map((board) => (
           <BoardCard
             key={board.id}
+            id={board.id}
             title={board.title}
           />
         ))}

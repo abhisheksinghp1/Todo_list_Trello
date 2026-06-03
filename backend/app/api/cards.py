@@ -6,20 +6,38 @@ from fastapi import (
 
 from sqlalchemy.orm import Session
 
-from app.schemas.card import CardCreate
+from app.schemas.card import (
+    CardCreate,
+    MoveCardSchema
+)
+
 from app.services.card_service import (
     create_card,
     get_card,
-    delete_card
+    delete_card,
+    get_cards_by_list,
+    move_card as move_card_service
 )
 
 from app.core.database import get_db
 from app.websocket.manager import manager
 
+
 router = APIRouter(
     prefix="/cards",
     tags=["Cards"]
 )
+
+
+@router.get("/list/{list_id}")
+def get_list_cards(
+    list_id: int,
+    db: Session = Depends(get_db)
+):
+    return get_cards_by_list(
+        db,
+        list_id
+    )
 
 
 @router.post("/")
@@ -48,7 +66,10 @@ def get_single_card(
     card_id: int,
     db: Session = Depends(get_db)
 ):
-    card = get_card(db, card_id)
+    card = get_card(
+        db,
+        card_id
+    )
 
     if not card:
         raise HTTPException(
@@ -83,3 +104,24 @@ async def remove_card(
     return {
         "message": "Card deleted"
     }
+
+
+@router.put("/{card_id}/move")
+def move_card_endpoint(
+    card_id: int,
+    payload: MoveCardSchema,
+    db: Session = Depends(get_db)
+):
+    card = move_card_service(
+        db,
+        card_id,
+        payload.list_id
+    )
+
+    if not card:
+        raise HTTPException(
+            status_code=404,
+            detail="Card not found"
+        )
+
+    return card

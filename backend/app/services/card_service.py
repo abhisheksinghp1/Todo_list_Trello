@@ -1,6 +1,27 @@
 from sqlalchemy.orm import Session
-
 from app.models.card import Card
+
+
+def move_card(
+    db: Session,
+    card_id: int,
+    list_id: int
+):
+    card = (
+        db.query(Card)
+        .filter(Card.id == card_id)
+        .first()
+    )
+
+    if not card:
+        return None
+
+    card.list_id = list_id
+
+    db.commit()
+    db.refresh(card)
+
+    return card
 
 
 def create_card(
@@ -9,7 +30,6 @@ def create_card(
     description: str,
     list_id: int
 ):
-
     card = Card(
         title=title,
         description=description,
@@ -45,3 +65,14 @@ def delete_card(
         db.commit()
 
     return card
+
+
+def get_cards_by_list(
+    db: Session,
+    list_id: int
+):
+    return (
+        db.query(Card)
+        .filter(Card.list_id == list_id)
+        .all()
+    )

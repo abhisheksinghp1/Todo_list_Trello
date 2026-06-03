@@ -34,3 +34,7 @@ class Card(Base):
         DateTime,
         nullable=True
     )
+    position = Column(
+    Integer,
+    default=0
+)

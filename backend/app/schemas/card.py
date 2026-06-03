@@ -2,6 +2,12 @@ from pydantic import BaseModel
 from datetime import datetime
 
 
+class MoveCardSchema(BaseModel):
+    list_id: int
+    position: int
+
+
+
 class CardCreate(BaseModel):
     title: str
     description: str | None = None

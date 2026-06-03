@@ -4,13 +4,16 @@ import { registerUser } from "../api/auth";
 
 function Register() {
 
-  const [name, setName] = useState("");
+  const [name, setName] =
+    useState("");
 
-  const [email, setEmail] = useState("");
+  const [email, setEmail] =
+    useState("");
 
-  const [password, setPassword] = useState("");
+  const [password, setPassword] =
+    useState("");
 
-  const handleRegister = async (
+  const handleSubmit = async (
     e: React.FormEvent
   ) => {
 
@@ -24,19 +27,26 @@ function Register() {
         password
       });
 
-      alert("Registration Success");
+      alert(
+        "Registration Success"
+      );
 
     } catch {
 
-      alert("Registration Failed");
+      alert(
+        "Registration Failed"
+      );
     }
   };
 
   return (
-    <form onSubmit={handleRegister}>
+    <form onSubmit={handleSubmit}>
+
+      <h1>Register</h1>
 
       <input
         placeholder="Name"
+        value={name}
         onChange={(e) =>
           setName(e.target.value)
         }
@@ -44,6 +54,7 @@ function Register() {
 
       <input
         placeholder="Email"
+        value={email}
         onChange={(e) =>
           setEmail(e.target.value)
         }
@@ -52,6 +63,7 @@ function Register() {
       <input
         type="password"
         placeholder="Password"
+        value={password}
         onChange={(e) =>
           setPassword(e.target.value)
         }

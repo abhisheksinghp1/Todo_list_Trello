@@ -1,13 +1,19 @@
 import { useState } from "react";
-import { loginUser } from "../api/auth";
+import { useNavigate } from "react-router-dom";
 
+import { loginUser } from "../api/auth";
 
 function Login() {
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-  const handleLogin = async (
+  const [email, setEmail] =
+    useState("");
+
+  const [password, setPassword] =
+    useState("");
+
+  const handleSubmit = async (
     e: React.FormEvent
   ) => {
 
@@ -15,29 +21,38 @@ function Login() {
 
     try {
 
-      const response = await loginUser({
-        email,
-        password
-      });
+      const response =
+        await loginUser({
+          email,
+          password
+        });
+
+      console.log(response);
 
       localStorage.setItem(
         "token",
         response.access_token
       );
 
-      alert("Login Success");
+      navigate("/dashboard");
 
-    } catch {
+    } catch (error) {
+
+      console.error(error);
 
       alert("Login Failed");
     }
   };
 
   return (
-    <form onSubmit={handleLogin}>
+    <form onSubmit={handleSubmit}>
+
+      <h1>Login</h1>
+
       <input
         type="email"
         placeholder="Email"
+        value={email}
         onChange={(e) =>
           setEmail(e.target.value)
         }
@@ -46,6 +61,7 @@ function Login() {
       <input
         type="password"
         placeholder="Password"
+        value={password}
         onChange={(e) =>
           setPassword(e.target.value)
         }
@@ -54,6 +70,7 @@ function Login() {
       <button type="submit">
         Login
       </button>
+
     </form>
   );
 }

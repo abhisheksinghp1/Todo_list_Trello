@@ -1,9 +1,7 @@
+import BoardsPage from "./BoardsPage";
+
 function Dashboard() {
-  return (
-    <div>
-      <h1>DASHBOARD WORKING 🚀</h1>
-    </div>
-  );
+  return <BoardsPage />;
 }
 
 export default Dashboard;
