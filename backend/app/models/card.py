@@ -13,11 +13,21 @@ from app.core.database import Base
 class Card(Base):
     __tablename__ = "cards"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
 
-    title = Column(String, nullable=False)
+    title = Column(
+        String,
+        nullable=False
+    )
 
-    description = Column(Text, nullable=True)
+    description = Column(
+        Text,
+        nullable=True
+    )
 
     list_id = Column(
         Integer,
@@ -34,7 +44,3 @@ class Card(Base):
         DateTime,
         nullable=True
     )
-    position = Column(
-    Integer,
-    default=0
-)

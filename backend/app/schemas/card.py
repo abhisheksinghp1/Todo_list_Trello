@@ -7,7 +7,6 @@ class MoveCardSchema(BaseModel):
     position: int
 
 
-
 class CardCreate(BaseModel):
     title: str
     description: str | None = None
@@ -17,7 +16,7 @@ class CardCreate(BaseModel):
 class CardUpdate(BaseModel):
     title: str
     description: str | None = None
-    list_id: int
+    due_date: datetime | None = None
 
 
 class CardResponse(BaseModel):

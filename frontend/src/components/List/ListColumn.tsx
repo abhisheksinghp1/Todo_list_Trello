@@ -9,8 +9,10 @@ import {
   deleteCard,
 } from "../../api/card";
 
-import CardItem from "../Card/CardItem";
+import DraggableCard from "../Card/DraggableCard";
 import CreateCard from "../Card/CreateCard";
+import DroppableList from "./DroppableList";
+import socket from "../../services/socket";
 
 type Props = {
   id: number;
@@ -26,12 +28,22 @@ function ListColumn({
     useState<any[]>([]);
 
   const loadCards = async () => {
+
     try {
+
       const data =
         await getCards(id);
 
+      console.log(
+        "List",
+        id,
+        data
+      );
+
       setCards(data);
+
     } catch (error) {
+
       console.error(
         "Error loading cards:",
         error
@@ -40,21 +52,32 @@ function ListColumn({
   };
 
   useEffect(() => {
+
     loadCards();
+
+    socket.onmessage = () => {
+
+      loadCards();
+    };
+
   }, [id]);
 
   const handleCreate =
     async (
       cardTitle: string
     ) => {
+
       try {
+
         await createCard(
           cardTitle,
           id
         );
 
-        loadCards();
+        await loadCards();
+
       } catch (error) {
+
         console.error(
           "Error creating card:",
           error
@@ -62,46 +85,60 @@ function ListColumn({
       }
     };
 
+  const handleDelete =
+    async (
+      cardId: number
+    ) => {
 
-const handleDelete = async (
-  cardId: number
-) => {
+      console.log(
+        "Deleting Card:",
+        cardId
+      );
 
-  try {
+      try {
 
-    await deleteCard(cardId);
+        const result =
+          await deleteCard(
+            cardId
+          );
 
-    loadCards();
+        console.log(
+          "Delete Response:",
+          result
+        );
 
-  } catch (error) {
+        await loadCards();
 
-    console.error(
-      "Error deleting card:",
-      error
-    );
-  }
-};
+      } catch (error) {
+
+        console.error(
+          "Delete Error:",
+          error
+        );
+      }
+    };
 
   return (
-  <div
-    style={{
-      width: "300px",
-      background: "#ebecf0",
-      padding: "12px",
-      borderRadius: "12px",
-      minHeight: "400px",
-      boxShadow:
-        "0 2px 8px rgba(0,0,0,0.1)",
-    }}
-  >
-    <h3
+    <div
       style={{
-        marginBottom: "15px",
-        fontWeight: "bold",
+        width: "300px",
+        background: "#ebecf0",
+        padding: "12px",
+        borderRadius: "12px",
+        minHeight: "400px",
+        boxShadow:
+          "0 2px 8px rgba(0,0,0,0.1)",
       }}
     >
-      {title}
-    </h3>
+
+      <h3
+        style={{
+          marginBottom: "15px",
+          fontWeight: "bold",
+        }}
+      >
+        {title}
+      </h3>
 
       <CreateCard
         onCreate={
@@ -109,16 +146,24 @@ const handleDelete = async (
         }
       />
 
-    {cards.map((card) => (
-  <CardItem
-  key={card.id}
-  id={card.id}
-  title={card.title}
-  onDelete={() =>
-    handleDelete(card.id)
-  }
-/>
-))}
+      <DroppableList id={id}>
+
+        {cards.map((card) => (
+
+          <DraggableCard
+            key={card.id}
+            id={card.id}
+            title={`${card.title} (ID:${card.id})`}
+            onDelete={() =>
+              handleDelete(
+                card.id
+              )
+            }
+          />
+
+        ))}
+
+      </DroppableList>
 
     </div>
   );

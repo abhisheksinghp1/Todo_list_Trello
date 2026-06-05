@@ -16,6 +16,28 @@ from app.models.board import Board
 from app.models.list import List
 from app.models.card import Card
 from app.models.comment import Comment
+from app.models.label import Label
+from app.models.activity import Activity
+from app.api.labels import (
+    router as label_router
+)
+from app.models.member import Member
+
+from app.api.checklists import (
+    router as checklist_router
+)
+from app.api.members import (
+    router as member_router
+)
+from app.api.activities import (
+    router as activity_router
+)
+
+from app.api.attachments import (
+    router as attachment_router
+)
+
+from app.models.attachment import Attachment
 
 
 app = FastAPI(
@@ -35,6 +57,25 @@ app.add_middleware(
 )
 
 Base.metadata.create_all(bind=engine)
+
+app.include_router(
+    attachment_router
+)
+
+app.include_router(
+    activity_router
+)
+
+app.include_router(
+    member_router
+)
+
+app.include_router(
+    label_router)
+
+app.include_router(
+    checklist_router
+)
 
 app.include_router(auth_router)
 app.include_router(board_router)

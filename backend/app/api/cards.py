@@ -8,7 +8,8 @@ from sqlalchemy.orm import Session
 
 from app.schemas.card import (
     CardCreate,
-    MoveCardSchema
+    MoveCardSchema,
+    CardUpdate
 )
 
 from app.services.card_service import (
@@ -16,7 +17,8 @@ from app.services.card_service import (
     get_card,
     delete_card,
     get_cards_by_list,
-    move_card as move_card_service
+    move_card,
+    update_card
 )
 
 from app.core.database import get_db
@@ -107,12 +109,12 @@ async def remove_card(
 
 
 @router.put("/{card_id}/move")
-def move_card_endpoint(
+async def move_card_endpoint(
     card_id: int,
     payload: MoveCardSchema,
     db: Session = Depends(get_db)
 ):
-    card = move_card_service(
+    card = move_card(
         db,
         card_id,
         payload.list_id
@@ -124,4 +126,40 @@ def move_card_endpoint(
             detail="Card not found"
         )
 
+    await manager.broadcast({
+        "event": "card_moved",
+        "card_id": card.id,
+        "list_id": payload.list_id
+    })
+
     return card
+
+
+@router.put("/{card_id}")
+async def update_card_endpoint(
+    card_id: int,
+    payload: CardUpdate,
+    db: Session = Depends(get_db)
+):
+
+    card = update_card(
+        db,
+        card_id,
+        payload.title,
+        payload.description,
+        payload.due_date
+    )
+
+    if not card:
+        raise HTTPException(
+            status_code=404,
+            detail="Card not found"
+        )
+
+    await manager.broadcast({
+        "event": "card_updated",
+        "card_id": card.id
+    })
+
+    return card
+

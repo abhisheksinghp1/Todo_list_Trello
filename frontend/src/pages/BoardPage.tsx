@@ -6,8 +6,17 @@ import {
   createList,
 } from "../api/list";
 
+import { moveCard } from "../api/card";
+
 import ListColumn from "../components/List/ListColumn";
 import CreateList from "../components/List/CreateList";
+
+import socket from "../services/socket";
+
+import {
+  DndContext,
+  closestCenter,
+} from "@dnd-kit/core";
 
 function BoardPage() {
 
@@ -17,6 +26,7 @@ function BoardPage() {
     useState<any[]>([]);
 
   const loadLists = async () => {
+
     try {
 
       const data =
@@ -36,7 +46,34 @@ function BoardPage() {
   };
 
   useEffect(() => {
+
     loadLists();
+
+    socket.onmessage = (
+      event
+    ) => {
+
+      const data =
+        JSON.parse(
+          event.data
+        );
+
+      console.log(
+        "Realtime Event:",
+        data
+      );
+
+      if (
+        data.event === "card_created" ||
+        data.event === "card_deleted" ||
+        data.event === "card_moved" ||
+        data.event === "card_updated"
+      ) {
+
+        loadLists();
+      }
+    };
+
   }, [id]);
 
   const handleCreateList =
@@ -62,7 +99,64 @@ function BoardPage() {
       }
     };
 
+  const handleDragEnd =
+    async (
+      event: any
+    ) => {
+
+      console.log(
+        "DRAG END FIRED"
+      );
+
+      const {
+        active,
+        over,
+      } = event;
+
+      console.log(
+        "Active Card:",
+        active?.id
+      );
+
+      console.log(
+        "Target List:",
+        over?.id
+      );
+
+      if (!over) {
+
+        console.log(
+          "NO DROP TARGET"
+        );
+
+        return;
+      }
+
+      try {
+
+        await moveCard(
+          Number(active.id),
+          Number(over.id),
+          0
+        );
+
+        console.log(
+          "MOVE API SUCCESS"
+        );
+
+        await loadLists();
+
+      } catch (error) {
+
+        console.error(
+          "Move Error:",
+          error
+        );
+      }
+    };
+
   return (
+
     <div
       style={{
         padding: "20px",
@@ -86,27 +180,38 @@ function BoardPage() {
         }
       />
 
-      <div
-        style={{
-          display: "flex",
-          gap: "20px",
-          marginTop: "20px",
-          alignItems: "flex-start",
-          overflowX: "auto",
-        }}
+      <DndContext
+        collisionDetection={closestCenter}
+        onDragEnd={
+          handleDragEnd
+        }
       >
 
-        {lists.map((list) => (
+        <div
+          style={{
+            display: "flex",
+            gap: "20px",
+            marginTop: "20px",
+            alignItems: "flex-start",
+            overflowX: "auto",
+          }}
+        >
 
-          <ListColumn
-            key={list.id}
-            id={list.id}
-            title={list.title}
-          />
+          {lists.map(
+            (list) => (
 
-        ))}
+              <ListColumn
+                key={list.id}
+                id={list.id}
+                title={list.title}
+              />
 
-      </div>
+            )
+          )}
+
+        </div>
+
+      </DndContext>
 
     </div>
   );

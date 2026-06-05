@@ -16,7 +16,7 @@ function CardItem({
 
   return (
     <div
-            style={{
+      style={{
         background: "white",
         padding: "12px",
         marginTop: "10px",
@@ -29,23 +29,32 @@ function CardItem({
         navigate(`/cards/${id}`)
       }
     >
+
       <p>{title}</p>
 
-    <button
-  onClick={(e) => {
-    e.stopPropagation();
-    onDelete();
-  }}
-  style={{
-    marginTop: "10px",
-    padding: "5px 10px",
-    border: "none",
-    borderRadius: "6px",
-    cursor: "pointer",
-  }}
->
-  Delete
-</button>
+      <button
+        onClick={(e) => {
+
+          e.preventDefault();
+          e.stopPropagation();
+
+          console.log(
+            "DELETE BUTTON CLICKED"
+          );
+
+          onDelete();
+        }}
+        style={{
+          marginTop: "10px",
+          padding: "5px 10px",
+          border: "none",
+          borderRadius: "6px",
+          cursor: "pointer",
+        }}
+      >
+        Delete
+      </button>
+
     </div>
   );
 }

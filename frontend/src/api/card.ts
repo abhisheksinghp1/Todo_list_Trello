@@ -1,5 +1,6 @@
 import { api } from "./client";
 
+
 const headers = () => ({
   Authorization: `Bearer ${localStorage.getItem("token")}`,
 });
@@ -78,6 +79,29 @@ export const getCard = async (
   const response =
     await api.get(
       `/cards/${cardId}`
+    );
+
+  return response.data;
+};
+
+export const updateCard = async (
+  cardId: number,
+  title: string,
+  description: string,
+  dueDate: string
+) => {
+
+  const response =
+    await api.put(
+      `/cards/${cardId}`,
+      {
+        title,
+        description,
+        due_date: dueDate || null,
+      },
+      {
+        headers: headers(),
+      }
     );
 
   return response.data;

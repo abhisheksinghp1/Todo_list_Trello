@@ -76,3 +76,28 @@ def get_cards_by_list(
         .filter(Card.list_id == list_id)
         .all()
     )
+
+def update_card(
+    db: Session,
+    card_id: int,
+    title: str,
+    description: str,
+    due_date
+):
+    card = (
+        db.query(Card)
+        .filter(Card.id == card_id)
+        .first()
+    )
+
+    if not card:
+        return None
+
+    card.title = title
+    card.description = description
+    card.due_date = due_date
+
+    db.commit()
+    db.refresh(card)
+
+    return card
